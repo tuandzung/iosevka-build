@@ -32,7 +32,7 @@ jobs:
           else
             echo "No new version to build."
           fi
-          
+
       - name: Checkout own repository
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         uses: actions/checkout@v4
@@ -44,10 +44,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-          
-      - name: Install ttfautohint
+
+      - name: Install ttfautohint & fontforge
         if: steps.check-tag.outputs.NEW_TAG == 'true'
-        run: sudo apt install -y ttfautohint
+        run: |
+          sudo apt install --no-install-recommends -yqq \
+            tttfautohint \
+            fontforge \
+            python3-fontforge \
+            parallel
 
       - name: Clone Iosevka repository
         if: steps.check-tag.outputs.NEW_TAG == 'true'
@@ -58,6 +63,12 @@ jobs:
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         run: cp private-build-plans.toml Iosevka/
 
+      - name: Download Nerd Fonts patcher scripts
+        if: steps.check-tag.outputs.NEW_TAG == 'true'
+        run: |
+          curl -sSl https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip -o FontPatcher.zip
+          unzip FontPatcher.zip -d nerd
+
       - name: Build Tepiosevka custom font
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         working-directory: Iosevka
@@ -67,11 +78,11 @@ jobs:
 
       - name: Patch Tepiosevka with Nerd Fonts
         if: steps.check-tag.outputs.NEW_TAG == 'true'
-        uses: addnab/docker-run-action@v3
-        with:
-          image: nerdfonts/patcher:latest
-          options: -v ${{ github.workspace }}/Iosevka/dist/Tepiosevka:/in -v ${{ github.workspace }}/TepiosevkaNerd:/out
-          run: -c -l -s --careful --makegroups -1
+        run: |
+          mkdir -p TepiosevkaNerd
+          find Iosevka/dist/Tepiosevka/TTF -type f \
+                \( -iname '*.otf' -o -iname '*.ttf' -o -iname '*.woff' -o -iname '*.eot' -o -iname '*.ttc' \) -print0 \
+          | parallel --verbose --null "--jobs=1" fontforge -script nerd/font-patcher -out ./TepiosevkaNerd $args {}
 
       - name: Display structure of created files
         run: ls -R ./TepiosevkaNerd
