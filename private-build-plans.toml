@@ -134,3 +134,8 @@ css = 400
 shape = 700
 menu = 700
 css = 700
+
+[buildPlans.Tepiosevka.widths.Normal]
+shape = 500
+menu = 5
+css = "normal"
