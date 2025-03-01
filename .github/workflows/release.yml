@@ -81,8 +81,10 @@ jobs:
         run: |
           mkdir -p TepiosevkaNerd
           find Iosevka/dist/Tepiosevka/TTF -type f \
-                \( -iname '*.otf' -o -iname '*.ttf' -o -iname '*.woff' -o -iname '*.eot' -o -iname '*.ttc' \) -print0 \
-          | parallel --verbose --null "--jobs=1" fontforge -script nerd/font-patcher -out ./TepiosevkaNerd $args {}
+                \( -iname '*.otf' -o -iname '*.ttf' -o -iname '*.woff' -o -iname '*.eot' -o -iname '*.ttc' \) \
+                -print0 \
+                | parallel --verbose --null "--jobs=1" fontforge -script nerd/font-patcher -out ./TepiosevkaNerd \
+                -c -q -l -s --careful --makegroups -1 {}
 
       - name: Display structure of created files
         run: ls -R ./TepiosevkaNerd
