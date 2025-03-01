@@ -49,7 +49,7 @@ jobs:
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         run: |
           sudo apt install --no-install-recommends -yqq \
-            tttfautohint \
+            ttfautohint \
             fontforge \
             python3-fontforge \
             parallel
