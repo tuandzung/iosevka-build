@@ -11,6 +11,8 @@ on:
 jobs:
   check-and-build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Check for new Iosevka tag
         id: check-tag
@@ -62,7 +64,7 @@ jobs:
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         run: |
           curl -SLC - https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip -o FontPatcher.zip
-          unzip FontPatcher.zip -d nerd
+          unzip -qqo FontPatcher.zip -d nerd
 
       - name: Build Tepiosevka custom font
         if: steps.check-tag.outputs.NEW_TAG == 'true'
