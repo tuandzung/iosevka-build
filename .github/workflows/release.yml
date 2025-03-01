@@ -66,7 +66,7 @@ jobs:
       - name: Download Nerd Fonts patcher scripts
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         run: |
-          curl -sSl https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip -o FontPatcher.zip
+          curl -SLC - https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip -o FontPatcher.zip
           unzip FontPatcher.zip -d nerd
 
       - name: Build Tepiosevka custom font
