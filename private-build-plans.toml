@@ -125,6 +125,11 @@ lig-hyphen-chain = "without-notch"
 lig-double-arrow-bar = "without-notch"
 lig-single-arrow-bar = "without-notch"
 
+[buildPlans.Tepiosevka.weights.Regular]
+shape = 400
+menu = 400
+css = 400
+
 [buildPlans.Tepiosevka.weights.Bold]
 shape = 700
 menu = 700
