@@ -1,0 +1,34 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Release Tepiosevka Nerd Font
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  check-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for new Iosevka tag
+        id: check-tag
+        run: |
+          LATEST_TAG=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/be5invis/Iosevka/tags | jq -r '.[0].name')
+          echo "Latest Iosevka tag: $LATEST_TAG"
+          LATEST_VERSION=$(echo $LATEST_TAG | sed 's/v//')
+
+          CURRENT_ARCHIVE=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/contents/ | jq -r '.[] | select(.name | test("IosevkaMyCustom_.*\\.zip")) | .name' | head -n 1)
+          if [ -n "$CURRENT_ARCHIVE" ]; then
+            CURRENT_VERSION=$(echo $CURRENT_ARCHIVE | sed -E 's/IosevkaMyCustom_(.*)\.zip/\1/')
+          else
+            CURRENT_VERSION=""
+          fi
+
+          if [ -z "$CURRENT_VERSION" ] || [ "$LATEST_VERSION" != "$CURRENT_VERSION" ]; then
+            echo "NEW_TAG=true" >> $GITHUB_OUTPUT
+            echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_OUTPUT
+          else
+            echo "No new version to build."
+          fi
