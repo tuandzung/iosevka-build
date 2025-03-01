@@ -47,7 +47,7 @@ jobs:
           
       - name: Install ttfautohint
         if: steps.check-tag.outputs.NEW_TAG == 'true'
-        run: apt install ttfautohint
+        run: sudo apt install -y ttfautohint
 
       - name: Clone Iosevka repository
         if: steps.check-tag.outputs.NEW_TAG == 'true'
