@@ -4,7 +4,7 @@ name: Release Tepiosevka Nerd Font
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '31 0 */2 * *'
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -32,3 +32,46 @@ jobs:
           else
             echo "No new version to build."
           fi
+          
+      - name: Checkout own repository
+        if: steps.check-tag.outputs.NEW_TAG == 'true'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        if: steps.check-tag.outputs.NEW_TAG == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          
+      - name: Install ttfautohint
+        if: steps.check-tag.outputs.NEW_TAG == 'true'
+        run: apt install ttfautohint
+
+      - name: Clone Iosevka repository
+        if: steps.check-tag.outputs.NEW_TAG == 'true'
+        run: |
+          git clone --depth 1 --branch ${{ steps.check-tag.outputs.LATEST_TAG }} https://github.com/be5invis/Iosevka.git
+
+      - name: Copy private-build-plans.toml
+        if: steps.check-tag.outputs.NEW_TAG == 'true'
+        run: cp private-build-plans.toml Iosevka/
+
+      - name: Build Tepiosevka custom font
+        if: steps.check-tag.outputs.NEW_TAG == 'true'
+        working-directory: Iosevka
+        run: |
+          npm install
+          npm run build -- ttf::Tepiosevka
+
+      - name: Patch Tepiosevka with Nerd Fonts
+        if: steps.check-tag.outputs.NEW_TAG == 'true'
+        uses: addnab/docker-run-action@v3
+        with:
+          image: nerdfonts/patcher:latest
+          options: -v ${{ github.workspace }}/Iosevka/dist/Tepiosevka:/in -v ${{ github.workspace }}/TepiosevkaNerd:/out
+          run: -c -l -s --careful --makegroups -1
+
+      - name: Display structure of created files
+        run: ls -R ./TepiosevkaNerd
