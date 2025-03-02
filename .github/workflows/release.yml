@@ -80,8 +80,9 @@ jobs:
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         run: |
           mkdir -p releases
-          zip -r releases/TepiosevkaNerd.zip TepiosevkaNerd
-          zip -r releases/TepiosevkaNerdMono.zip TepiosevkaNerdMono
+          zip -r releases/Tepiosevka.zip build/Tepiosevka
+          zip -r releases/TepiosevkaNerdMono.zip build/TepiosevkaNerdMono
+          zip -r releases/TepiosevkaNerdBold.zip build/TepiosevkaNerdBold
 
       - name: Upload zip archive
         if: steps.check-tag.outputs.NEW_TAG == 'true'
@@ -96,3 +97,4 @@ jobs:
         run: |
           rm -rf Iosevka
           rm -rf nerd
+          rm -rf build
