@@ -21,4 +21,5 @@ for font in `find $WORKING_DIR -type f -name "*.otf" -o -name "*.ttf" -o -name "
     --outputdir build/TepiosevkaNerd
 done
 
-mv $WORKING_DIR/Tepiosevka build/
+mkdir -p build/Tepiosevka
+mv $WORKING_DIR/* build/Tepiosevka
