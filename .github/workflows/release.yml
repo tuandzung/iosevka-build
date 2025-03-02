@@ -89,7 +89,6 @@ jobs:
         with:
           files: TepiosevkaNerd.zip
           tag_name: ${{ steps.check-tag.outputs.LATEST_TAG }}
-          draft: true
           make_latest: true
 
       - name: Cleanup
