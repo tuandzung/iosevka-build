@@ -81,17 +81,16 @@ jobs:
 
       - name: Prepare zip archive
         if: steps.check-tag.outputs.NEW_TAG == 'true'
-        run: zip -r TepiosevkaNerd-${{ steps.check-tag.outputs.LATEST_TAG }}.zip TepiosevkaNerd
+        run: zip -r TepiosevkaNerd.zip TepiosevkaNerd
 
       - name: Upload zip archive
         if: steps.check-tag.outputs.NEW_TAG == 'true'
-        uses: ncipollo/release-action@v1
+        uses: softprops/action-gh-release@v2
         with:
-          allowUpdates: true
-          artifacts: "TepiosevkaNerd-${{ steps.check-tag.outputs.LATEST_TAG }}.zip"
-          tag: ${{ steps.check-tag.outputs.LATEST_TAG }}
-          removeArtifacts: true
-          makeLatest: true
+          files: TepiosevkaNerd.zip
+          tag_name: ${{ steps.check-tag.outputs.LATEST_TAG }}
+          draft: true
+          make_latest: true
 
       - name: Cleanup
         if: steps.check-tag.outputs.NEW_TAG == 'true'
