@@ -92,3 +92,9 @@ jobs:
           tag: ${{ steps.check-tag.outputs.LATEST_TAG }}
           removeArtifacts: true
           makeLatest: true
+
+      - name: Cleanup
+        if: steps.check-tag.outputs.NEW_TAG == 'true'
+        run: |
+          rm -rf Iosevka
+          rm -rf nerd
