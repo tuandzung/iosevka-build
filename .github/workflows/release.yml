@@ -76,18 +76,18 @@ jobs:
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         run: ./patch_fonts.sh
 
-      - name: Display structure of created files
-        run: ls -R ./TepiosevkaNerd
-
       - name: Prepare zip archive
         if: steps.check-tag.outputs.NEW_TAG == 'true'
-        run: zip -r TepiosevkaNerd.zip TepiosevkaNerd
+        run: |
+          mkdir -p releases
+          zip -r releases/TepiosevkaNerd.zip TepiosevkaNerd
+          zip -r releases/TepiosevkaNerdMono.zip TepiosevkaNerdMono
 
       - name: Upload zip archive
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          files: TepiosevkaNerd.zip
+          files: releases/*
           tag_name: ${{ steps.check-tag.outputs.LATEST_TAG }}
           make_latest: true
 

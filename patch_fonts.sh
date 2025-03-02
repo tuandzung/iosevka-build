@@ -11,6 +11,14 @@ for font in `find $WORKING_DIR -type f -name "*.otf" -o -name "*.ttf" -o -name "
     -l \
     -c \
     --careful \
+    -out ./TepiosevkaNerdMono \
+    $font >> nerd.log 2>&1
+
+  fontforge -script nerd/font-patcher \
+    -q \
+    -l \
+    -c \
+    --careful \
     --makegroups -1 \
     -out ./TepiosevkaNerd \
     $font >> nerd.log 2>&1
