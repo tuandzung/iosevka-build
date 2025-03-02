@@ -88,7 +88,6 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
-          prerelease: true
           artifacts: "TepiosevkaNerd-${{ steps.check-tag.outputs.LATEST_TAG }}.zip"
           tag: ${{ steps.check-tag.outputs.LATEST_TAG }}
           removeArtifacts: true
