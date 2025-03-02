@@ -48,8 +48,7 @@ jobs:
           sudo apt install --no-install-recommends -yqq \
             ttfautohint \
             fontforge \
-            python3-fontforge \
-            parallel
+            python3-fontforge
 
       - name: Clone Iosevka repository
         if: steps.check-tag.outputs.NEW_TAG == 'true'
@@ -75,13 +74,7 @@ jobs:
 
       - name: Patch Tepiosevka with Nerd Fonts
         if: steps.check-tag.outputs.NEW_TAG == 'true'
-        run: |
-          mkdir -p TepiosevkaNerd
-          find Iosevka/dist/Tepiosevka/TTF -type f \
-                \( -iname '*.otf' -o -iname '*.ttf' -o -iname '*.woff' -o -iname '*.eot' -o -iname '*.ttc' \) \
-                -print0 \
-                | parallel --verbose --null "--jobs=1" fontforge -script nerd/font-patcher -out ./TepiosevkaNerd \
-                -c -q -l -s --careful --makegroups -1 {}
+        run: ./patch_fonts.sh
 
       - name: Display structure of created files
         run: ls -R ./TepiosevkaNerd
@@ -99,3 +92,4 @@ jobs:
           artifacts: "TepiosevkaNerd-${{ steps.check-tag.outputs.LATEST_TAG }}.zip"
           tag: ${{ steps.check-tag.outputs.LATEST_TAG }}
           removeArtifacts: true
+          makeLatest: true
