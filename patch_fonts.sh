@@ -11,15 +11,6 @@ for font in `find $WORKING_DIR -type f -name "*.otf" -o -name "*.ttf" -o -name "
     --mono \
     --quiet \
     --no-progressbars \
-    --outputdir build/TepiosevkaNerdMono
-
-  fontforge -script nerd/font-patcher $font \
-    --careful \
-    --complete \
-    --quiet \
-    --no-progressbars \
-    --outputdir build/TepiosevkaNerd
+    --makegroups -1 \
+    --outputdir build/Tepiosevka
 done
-
-mkdir -p build/Tepiosevka
-mv $WORKING_DIR/* build/Tepiosevka
