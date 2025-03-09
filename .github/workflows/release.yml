@@ -59,6 +59,12 @@ jobs:
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         run: cp private-build-plans.toml Iosevka/
 
+      - name: Download Nerd Fonts patcher scripts
+        if: steps.check-tag.outputs.NEW_TAG == 'true'
+        run: |
+          curl -SLC - https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip -o FontPatcher.zip
+          unzip -qqo FontPatcher.zip -d nerd
+
       - name: Build Tepiosevka custom font
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         working-directory: Iosevka
