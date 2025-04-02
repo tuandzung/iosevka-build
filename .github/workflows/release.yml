@@ -1,12 +1,9 @@
 # This is a basic workflow to help you get started with Actions
-
 name: Release Tepiosevka Nerd Font
-
 on:
   schedule:
     - cron: '31 0 */2 * *'
   workflow_dispatch:
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   check-and-build:
@@ -29,19 +26,16 @@ jobs:
           else
             echo "No new version to build."
           fi
-
       - name: Checkout own repository
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Setup Node.js
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-
       - name: Install ttfautohint & fontforge
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         run: |
@@ -49,39 +43,33 @@ jobs:
             ttfautohint \
             fontforge \
             python3-fontforge
-
       - name: Clone Iosevka repository
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         run: |
           git clone --depth 1 --branch ${{ steps.check-tag.outputs.LATEST_TAG }} https://github.com/be5invis/Iosevka.git
-
       - name: Copy private-build-plans.toml
         if: steps.check-tag.outputs.NEW_TAG == 'true'
-        run: cp private-build-plans.toml Iosevka/
-
+        run: 
       - name: Download Nerd Fonts patcher scripts
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         run: |
           curl -SLC - https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FontPatcher.zip -o FontPatcher.zip
           unzip -qqo FontPatcher.zip -d nerd
-
       - name: Build Tepiosevka custom font
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         working-directory: Iosevka
         run: |
           npm install
           npm run build -- ttf::Tepiosevka
-
       - name: Patch Tepiosevka with Nerd Fonts
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         run: ./patch_fonts.sh
-
       - name: Prepare zip archive
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         run: |
           mkdir -p releases
           zip -r releases/Tepiosevka.zip build/Tepiosevka
-
+          zip -r releases/TepiosevkaNF.zip build/TepiosevkaNF
       - name: Upload zip archive
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         uses: softprops/action-gh-release@v2
@@ -89,7 +77,6 @@ jobs:
           files: releases/*
           tag_name: ${{ steps.check-tag.outputs.LATEST_TAG }}
           make_latest: true
-
       - name: Cleanup
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         run: |
