@@ -49,7 +49,8 @@ jobs:
           git clone --depth 1 --branch ${{ steps.check-tag.outputs.LATEST_TAG }} https://github.com/be5invis/Iosevka.git
       - name: Copy private-build-plans.toml
         if: steps.check-tag.outputs.NEW_TAG == 'true'
-        run: 
+        run: |
+          cp private-build-plans.toml Iosevka/
       - name: Download Nerd Fonts patcher scripts
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         run: |
