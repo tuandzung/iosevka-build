@@ -39,6 +39,7 @@ jobs:
       - name: Install ttfautohint & fontforge
         if: steps.check-tag.outputs.NEW_TAG == 'true'
         run: |
+          sudo apt update -yqq || true
           sudo apt install --no-install-recommends -yqq \
             ttfautohint \
             fontforge \
